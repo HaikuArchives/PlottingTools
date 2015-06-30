@@ -1,0 +1,57 @@
+
+
+GrafDemo - An application demonstrating the use of some graphic and mathematical classes.
+
+This demonstration application allows the user to enter a number of points on a graph by clicking the location where the point is to appear.  When a sufficient number of points have been entered (at least as many points as fit parameters), the data is fitted and the function is shown.  A menu allows choosing the number of fit parameters, or the selection of a cubic spline fit.  Individual points may be deleted by shift-clicking on them, and all points may be erased by choosing "Erase" from the "Edit" menu. 
+
+NOTE:  The source code may be used by anyone, for any reason, completely free of royalties or any other legal encumbrance from me.  I always appreciate some attribution, however, as well as email if someone finds it useful.
+
+History:
+I started the core graphing algorithms on an Apple II, using 6502 assembly language and Apple Basic. That makes some of this code older than some of you developers - a scary thought, n'est ce pas? The code was then ported to Turbo Pascal on the IBM, and then to Logitech's Modula-2. When the Mac grew out of its diapers (ie - the MacII), I ported the code to that OS using MetroWerks Modula-2, which, by the way, was a very good implementation. As an original tester for MetroWerks C++, I eventually abandoned M2 and ported all 20 MB or so of accumulated M2 code to C and C++, mainly PowerPlant. When I discovered BeOS, I became a developer and slowly pondered whether or not it would be advisable to re-write all of the PP and stuff for the BeOS. After the Boston Developer's conference, I felt that it would be worth my while to do so, and also to investigate the BeOS for a rather huge medical imaging project which I developed. My considered opinion, after porting this demo, is that it is well worth while. The port (actually, an almost complete redesign) went well, and the resulting code for this demo was about 53K. The same demo in PP was about 320K!
+
+Version 2.0 - I rewrote the graphic classes to make them more C++-like, and I added a menu to the demo so that the user can select among linear, log2 and log10 axes.
+
+Disclaimer:
+As you can see from the above, my past is checkered. Although I try to adapt my programming style to the language and system in use, there may be hints of Pascal, Modula-2 or Mac-isms which occasionally creep through. However, I try to keep the code as open and obvious as possible, since I find that if I don't, I regret it later when I have to re-port it (hopefully, never again). Also, I will not be
+responsible for any direct or consequential damages arising out of use of this software or source
+code. The code has been tested, but after so many iterations, I cannot guarantee that some bugs or inaccuracies will not exist.
+
+What Next:
+I plan to develop this core into a scientific/statistical graphing application which accepts drag & drop files or data from spread sheets (BeatWare, etc). It will have add-ons of statistical classes for linear least-squares regression with Pearson's 'r' , 't' and 'p' values, multiple regression, distribution statistics, etc. Truly, the hardest problem is not the 'port', but how to completely rethink the project to take advantage of the many capabilities of the BeOS.
+
+Stephen Wardlaw, M.D.
+462 CB  Y-NHH
+Yale University School of Medicine
+20 York St.
+New Haven, CT  06504
+
+Medical R&D
+191 North Cove Road
+Old Saybrook, CT 06475
+
+SWardlaw@aol.com
+swardlaw&connix.com
+
+NOTES FOR 'WGStdGraph' AND ASSOCIATED CLASSES
+
+"WMFunctBase"
+This is a simple abstract base class for mathematical functions, principally for those used in graphic transformations. 
+
+"WGGraphAxis"
+This is an abstract base class for any graph axis.  Since a graph axis is a visual field which represents a mathematical scale, the class is derived from "LMFunctBase".  Two derived classes were formed from this base class:
+
+"WGAbscissa" and "WGOrdinate"
+These derive from "WGGraphAxis" and "BView" and provide drawing instructions for panes which serve as the X-Axis (Abscissa) and Y-Axis (Ordinate).  These define some (vertical or horizontal) space and can be placed anywhere in a superview.  They return enough information to allow classes which use them to correctly place the panes.  Note that they can be configured any number of ways, such as labelled, unlabelled, ticks to right, left, up down, etc.  This allows them to be used in assembling almost any type of 2-D graph, including those with multiple abscissas or ordinates. The classes will generate a plot axis in linear, log, or any user-defined function format. It is possible to make really ugly axes, but the next iteration will include a means of editing the axes, as well as some automated scaling algorithms which generally produce a good esthetic result. In the mean time, look at the constructor of "GDView" for a few lines that can be changed to alter the graph...
+
+"WGStdGraph"
+This class is derived from "BView" and contains a single "WGAbscissa" and "WGOrdinate", as well as a horizontal (X-Axis) label and rotated (Y-Axis) label. Several types of plot functions are provided.  Since this is an "BView", it can be placed in a window or other superView and can be resized, with the axis panes responding appropriately. Normally, a derived class is created from it which handles the plotting, etc. "GDPolyPlot" is an example of this.
+
+"WMPolyFit"
+This is derived from "WMFunctBase" and provides a n-paramater polynomial fitting routine based upon the very robust Singular Value Decomposition method described in "Numerical Recipes" by W. Press et al.  Since this type of fit is frequently used in data fitting, it uses a data structure which contains two fields besides the X & Y values to be fitted.  One is the Boolean "use", which is a flag which determines whether the point is used in fitting the data.  This allows data points to be eliminated or replaced without disturbing the original data set.  The second is "sig", which denotes the significance of the point.  This can be any arbitrary number greater than zero, and the lower the number, the more significant the point.  This can be used to weight the fit points differently.  Specifically, the 'sig' should be, or relate to, the coefficient of variation (CV) of the 'x' value of the data point.  If no weighting is to be used, all 'sig's may be 1.0.  The current version supports a data set of up to 50 data points and five fit parameters.  This can be expanded, but since the matrix size increases rapidly, a very large collection of data points should be first broken down into sections and the average  x & y value of the cluster, along with the significance, can then be placed into "PolyFit".
+
+"WMCubicFit"
+This is derived from "WMFunctBase" and provides a point-to-point cubic spline interpolation.  A description of this process is also found in "Numerical Recipes".  Note that this does not "fit" the data, but only interpolates between the points. Also note that the data must be sorted.
+
+"WGOdometer"
+This is an "odometer" which can be attached to a graph and gives a read out of the mouse position in graph coordinates. It can be resized for the prevailing font and graph axes by a single call, and it can be placed anywhere, even in another window. 
+
